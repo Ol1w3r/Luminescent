@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "lumi",
+  "name": "Luminescent",
+  "description": "Ever wanted to play with light? \nOr darkness, you decide!",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["OliW3r"],
+  "credits": "The Forge and FML guys, for making this example\nYes, these guys are great!",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

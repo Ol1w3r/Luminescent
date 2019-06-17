@@ -13,13 +13,13 @@ import w3r.lumi.proxy.CommonProxy;
 import w3r.lumi.util.Reference;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.MOD_VERSION)
-public class LuminescentMagic {
+public class Luminescent {
 
 	
 	public static Logger logger = null;
 	
 	@Instance
-	public static LuminescentMagic instance;
+	public static Luminescent instance;
 	
 	@SidedProxy(clientSide = Reference.CLIENTPROXY, serverSide = Reference.COMMONPROXY)
 	public static CommonProxy proxy;
