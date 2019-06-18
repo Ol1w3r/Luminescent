@@ -1,6 +1,5 @@
 package w3r.lumi.tileentity;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map.Entry;
 
 import io.netty.buffer.ByteBuf;
@@ -18,10 +17,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry.ItemStackHolder;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -29,6 +25,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 import net.minecraftforge.oredict.OreDictionary;
+import w3r.lumi.init.Blocks;
 
 public class TileEntityLightBox extends TileEntity implements ITickable {
 
@@ -46,25 +43,12 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 			if (!isItemValid(slot, stack)) return stack;
 			return super.insertItem(slot, stack, simulate);
 		};
-
-		public boolean isItemValid(int slot, ItemStack stack) {
-			if (slot == SLOT_INPUT) return SlotFurnaceInput.isStackValid(stack);
-			if (slot == SLOT_FUEL) return SlotFurnaceFuel.isStackValid(stack);
-			return slot > 2 ? SlotUpgrade.isStackValid(stack) : true;
-		};
 	};
 	private final RangedWrapper TOP = new RangedWrapper(inv, SLOT_INPUT, SLOT_INPUT + 1);
 	private final RangedWrapper SIDES = new RangedWrapper(inv, SLOT_FUEL, SLOT_FUEL + 1);
 	private final RangedWrapper BOTTOM = new RangedWrapper(inv, SLOT_OUTPUT, SLOT_OUTPUT + 1);
 
 	//Main TE Fields.
-	protected MutableEnergyStorage energy = new MutableEnergyStorage(MAX_ENERGY_STORED, MAX_FE_TRANSFER, getEnergyUse());
-	protected FluidTank tank = new FluidTank(4000) {
-		@Override
-		public boolean canFillFluidType(FluidStack fluid) {
-			return super.canFillFluidType(fluid) && getFluidBurnTime(fluid) > 0;
-		}
-	};
 	protected ItemStack recipeKey = ItemStack.EMPTY;
 	protected ItemStack recipeOutput = ItemStack.EMPTY;
 	protected ItemStack failedMatch = ItemStack.EMPTY;
@@ -82,7 +66,6 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 		burnTime = tag.getInteger("burn_time");
 		fuelLength = tag.getInteger("fuel_length");
 		currentCookTime = tag.getInteger("current_cook_time");
-		tank.readFromNBT(tag.getCompoundTag("tank"));
 	}
 
 	@Override
@@ -92,7 +75,6 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 		compound.setInteger("burn_time", burnTime);
 		compound.setInteger("fuel_length", fuelLength);
 		compound.setInteger("current_cook_time", currentCookTime);
-		compound.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
 		return compound;
 	}
 
@@ -104,7 +86,6 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 		burnTime = fromNet[1];
 		fuelLength = fromNet[2];
 		currentCookTime = fromNet[3];
-		tank.setFluid(fluid);
 	}
 
 	/**
@@ -114,15 +95,6 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 		buf.writeInt(burnTime);
 		buf.writeInt(fuelLength);
 		buf.writeInt(currentCookTime);
-		FluidStack fluid = tank.getFluid();
-		if (fluid == null) {
-			buf.writeInt(4);
-			buf.writeCharSequence("null", StandardCharsets.UTF_8);
-		} else {
-			buf.writeInt(fluid.getFluid().getName().length());
-			buf.writeCharSequence(fluid.getFluid().getName(), StandardCharsets.UTF_8);
-			buf.writeInt(fluid.amount);
-		}
 	}
 
 	/**
@@ -135,10 +107,6 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 		ItemStack fuel = ItemStack.EMPTY;
 		boolean canSmelt = canSmelt();
 
-		if (!this.isBurning() && (isAltFuel() || !(fuel = inv.getStackInSlot(SLOT_FUEL)).isEmpty())) {
-			if (canSmelt) burnFuel(fuel, false);
-		}
-
 		boolean wasBurning = isBurning();
 
 		if (this.isBurning()) {
@@ -147,11 +115,11 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 			else currentCookTime = 0;
 		}
 
-		if (!this.isBurning() && (isAltFuel() || !(fuel = inv.getStackInSlot(SLOT_FUEL)).isEmpty())) {
+		if (!this.isBurning() && (!(fuel = inv.getStackInSlot(SLOT_FUEL)).isEmpty())) {
 			if (canSmelt()) burnFuel(fuel, wasBurning);
 		}
 
-		if (wasBurning && !isBurning()) world.setBlockState(pos, getDimState());
+		//if (wasBurning && !isBurning()) world.setBlockState(pos, getDimState());
 	}
 
 	/**
@@ -178,18 +146,13 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 	 * @param burnedThisTick If we have burned this tick, used to determine if we need to change blockstate.
 	 */
 	protected void burnFuel(ItemStack fuel, boolean burnedThisTick) {
-		if (isFluid() && tank.getFluid() != null) {
-			fuelLength = burnTime = getFluidBurnTime(tank.getFluid());
-			if (this.isBurning()) tank.getFluid().amount--;
-		} else {
 			fuelLength = (burnTime = getItemBurnTime(fuel));
 			if (this.isBurning()) {
 				Item item = fuel.getItem();
 				fuel.shrink(1);
 				if (fuel.isEmpty()) inv.setStackInSlot(SLOT_FUEL, item.getContainerItem(fuel));
 			}
-		}
-		if (isBurning() && !burnedThisTick) world.setBlockState(pos, getLitState());
+		//if (isBurning() && !burnedThisTick) world.setBlockState(pos, getLitState());
 		markDirty();
 	}
 
@@ -228,8 +191,8 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 	 */
 	public void smeltItem() {
 		ItemStack input = inv.getStackInSlot(SLOT_INPUT);
-		ItemStack recipeOutput = getResult();
-		if (!hasOreResult && hasUpgrade(Upgrades.PROCESSING)) recipeOutput.grow(recipeOutput.getCount());
+		//ItemStack recipeOutput = getResult();
+		//if (!hasOreResult && hasUpgrade(Upgrades.PROCESSING)) recipeOutput.grow(recipeOutput.getCount());
 		ItemStack curOutput = inv.getStackInSlot(SLOT_OUTPUT);
 
 		if (curOutput.isEmpty()) inv.setStackInSlot(SLOT_OUTPUT, recipeOutput);
@@ -254,7 +217,6 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 	 * @return The burn time for this fuel, or 0, if this is an electric furnace.
 	 */
 	public int getItemBurnTime(ItemStack stack) {
-		if (isAltFuel()) return 0;
 		return TileEntityFurnace.getItemBurnTime(stack);
 	}
 
@@ -263,7 +225,7 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 	 */
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || capability == CapabilityEnergy.ENERGY && isElectric() || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && isFluid()) return true;
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
 		return super.hasCapability(capability, facing);
 	}
 
@@ -279,8 +241,7 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 			else if (facing == EnumFacing.UP) h = TOP;
 			else h = SIDES;
 			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(h);
-		}
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tank);
+		};
 		return super.getCapability(capability, facing);
 	}
 
@@ -290,20 +251,17 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 
 	private boolean hasOreResult = false;
 
-	/**
+	
 	private ItemStack getResult() {
-			if (out.isEmpty() && isOre(recipeKey)) {
-				out = FurnaceRecipes.instance().getSmeltingList().get(recipeKey).copy();
-				out.grow(out.getCount());
-			}
-			if (!out.isEmpty()) {
-				hasOreResult = true;
-				return out;
-			}
-		}
-		hasOreResult = false;
-		return FurnaceRecipes.instance().getSmeltingList().get(recipeKey).copy();
-	}*/
+			//if (out.isEmpty() && isOre(recipeKey)) {
+				//out = FurnaceRecipes.instance().getSmeltingList().get(recipeKey).copy();
+				//out.grow(out.getCount());
+			//}
+			//if (!out.isEmpty()) {
+				//hasOreResult = true;
+				//return out;
+		return new ItemStack(Blocks.Lightbox_Table);
+	}
 
 	private static boolean isOre(ItemStack stack) {
 		if (!stack.getHasSubtypes() && !stack.isItemStackDamageable()) stack.setItemDamage(0);
@@ -355,10 +313,6 @@ public class TileEntityLightBox extends TileEntity implements ITickable {
 		tag.setTag("inv", inv.serializeNBT());
 		tag.setInteger("current_cook_time", currentCookTime);
 		return tag;
-	}
-
-	public FluidTank getTank() {
-		return tank;
 	}
 
 }

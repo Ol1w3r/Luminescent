@@ -6,6 +6,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import w3r.lumi.Luminescent;
+import w3r.lumi.inventory.ContainerLB;
+import w3r.lumi.tileentity.TileEntityLightBox;
 import w3r.lumi.util.Reference;
 
 public class GuiLB extends GuiContainer {
@@ -42,19 +44,9 @@ public class GuiLB extends GuiContainer {
 		int l = this.getCookProgressScaled(24);
 		this.drawTexturedModalRect(i + 79, j + 34, 176, 14, l + 1, 16);
 
-		int k = this.getEnergyStoredScaled(16);
-		this.drawTexturedModalRect(this.guiLeft + 142, this.guiTop + 35, 176, 31, 3, 16 - k);
-
 		this.zLevel++;
 		this.drawTexturedModalRect(this.guiLeft + 151, this.guiTop + 14, 176, 47, 16, 64);
 		this.zLevel--;
-
-		int am = getFluidStoredScaled(63);
-		if (am > 0) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(0, 63 - am, 0);
-			GlStateManager.popMatrix();
-		}
 	}
 
 	@Override
@@ -67,23 +59,7 @@ public class GuiLB extends GuiContainer {
 	@Override
 	protected void renderHoveredToolTip(int x, int y) {
 		super.renderHoveredToolTip(x, y);
-		if (te.getTank().getFluid() != null && this.isPointInRegion(151, 11 + (63 - getFluidStoredScaled(63)), 16, getFluidStoredScaled(63), x, y)) {
-			this.drawHoveringText(I18n.format("gui.furnaceoverhaul.fluid", te.getTank().getFluidAmount(), te.getTank().getFluid().getLocalizedName()), x, y);
-		} else if (this.isPointInRegion(142, 35, 3, 16, x, y)) {
-			this.drawHoveringText(I18n.format("gui.furnaceoverhaul.energy", te.getEnergy()), x, y);
-		}
-	}
-
-	private int getEnergyStoredScaled(int pixels) {
-		int cur = te.getEnergy();
-		int max = TileEntityLightBox.MAX_ENERGY_STORED;
-		return getPixels(cur, max, pixels);
-	}
-
-	private int getFluidStoredScaled(int pixels) {
-		int cur = te.getTank().getFluidAmount();
-		int max = 4000;
-		return getPixels(cur, max, pixels);
+		
 	}
 
 	private int getCookProgressScaled(int pixels) {
@@ -93,7 +69,6 @@ public class GuiLB extends GuiContainer {
 	}
 
 	private int getBurnLeftScaled(int pixels) {
-		if (te.isElectric() && te.getEnergy() >= te.getEnergyUse()) return pixels;
 		return getPixels(te.getBurnTime(), Math.max(1, te.getFuelLength()), pixels);
 	}
 

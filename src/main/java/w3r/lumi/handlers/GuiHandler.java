@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import w3r.lumi.inventory.ContainerLB;
-import w3r.lumi.tileentity.TileEntityLightbox;
+import w3r.lumi.tileentity.TileEntityLightBox;
 
 public class GuiHandler implements IGuiHandler{
 	
@@ -19,8 +19,8 @@ public class GuiHandler implements IGuiHandler{
 	    switch (id)
 	    {
 	    case GUI_LIGHTBOX: 
-	      if ((tileEntity instanceof TileEntityLightbox)) {
-	        return new ContainerLB(player.inventory, (TileEntityLightbox)tileEntity);
+	      if ((tileEntity instanceof TileEntityLightBox)) {
+	        return new ContainerLB(player.inventory, (TileEntityLightBox)tileEntity);
 	      }
 	      
 	    }
@@ -35,8 +35,8 @@ public class GuiHandler implements IGuiHandler{
 	    switch (id)
 	    {
 	    case GUI_LIGHTBOX: 
-	      if ((tileEntity instanceof TileEntityLightbox)) {
-	        return new GuiLB(player.inventory, (TileEntityLightbox)tileEntity);
+	      if ((tileEntity instanceof TileEntityLightBox)) {
+	        return new GuiLB(player.inventory, (TileEntityLightBox)tileEntity);
 	      }
 	      
 	    }
