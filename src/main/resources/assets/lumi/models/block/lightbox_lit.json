@@ -1,0 +1,9 @@
+{
+    "parent": "block/cube_bottom_top",
+    "textures": {
+    	"particle": "lumi:blocks/lightbox_side",
+        "top":   "lumi:blocks/lightbox_lit_top",
+        "bottom": "lumi:blocks/lightbox_side",
+        "side": "lumi:blocks/lightbox_side"
+    }
+}

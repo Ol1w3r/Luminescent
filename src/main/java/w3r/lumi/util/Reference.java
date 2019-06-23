@@ -9,4 +9,6 @@ public class Reference {
 	public static final String ACCEPTED_VERSIONS = "1.12.2";
 	public static final String CLIENTPROXY = "w3r.lumi.proxy.ClientProxy";
 	public static final String COMMONPROXY = "w3r.lumi.proxy.CommonProxy";
+	
+	public static final int GUI_LIGHTBOX = 0; 
 }

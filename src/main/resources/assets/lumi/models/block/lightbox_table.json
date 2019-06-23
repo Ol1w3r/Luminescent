@@ -1,8 +1,0 @@
-{
-    "parent": "block/cube_bottom_top",
-    "textures": {
-        "top":   "lumi:blocks/lightbox_table_top",
-        "bottom": "lumi:blocks/lightbox_table_side",
-        "side": "lumi:blocks/lightbox_table_side"
-    }
-}

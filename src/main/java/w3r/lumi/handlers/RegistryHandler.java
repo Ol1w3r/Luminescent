@@ -14,6 +14,21 @@ import w3r.lumi.Luminescent;
 @EventBusSubscriber
 public class RegistryHandler 
 {
+	
+	
+	public static void preInitRegistries() {
+		
+	}
+	
+	public static void initRegistries() {
+		
+	}
+	
+	public static void postInitRegistries() {
+	
+	}
+	
+	
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event)
 	{
