@@ -1,20 +1,16 @@
 package w3r.lumi.blocks.lightbox;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -165,7 +161,8 @@ public class TileEntityLightbox extends TileEntity implements ITickable {
 		{
 			if(this.canSmelt() && this.isBurning())
 			{
-				ItemStack output = LightboxRecipes.getInstance().getSinteringResult(inputs[0], inputs[1]);
+				ItemStack output = LightboxRecipes.getInstance().
+						getLightboxResult(inputs[0], inputs[1], inputs[2], inputs[3], inputs[4]);
 				if(!output.isEmpty())
 				{
 					smelting = output;
@@ -184,7 +181,12 @@ public class TileEntityLightbox extends TileEntity implements ITickable {
 		if(((ItemStack)this.handler.getStackInSlot(0)).isEmpty() || ((ItemStack)this.handler.getStackInSlot(1)).isEmpty()) return false;
 		else 
 		{
-			ItemStack result = LightboxRecipes.getInstance().getSinteringResult((ItemStack)this.handler.getStackInSlot(0), (ItemStack)this.handler.getStackInSlot(1));	
+			ItemStack result = LightboxRecipes.getInstance().
+					getLightboxResult((ItemStack)this.handler.getStackInSlot(0), 
+					(ItemStack)this.handler.getStackInSlot(1),
+					(ItemStack)this.handler.getStackInSlot(2), 
+					(ItemStack)this.handler.getStackInSlot(3), 
+					(ItemStack)this.handler.getStackInSlot(4));	
 			if(result.isEmpty()) return false;
 			else
 			{
