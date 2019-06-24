@@ -72,7 +72,7 @@ public class Lightbox extends BlockBase implements ITileEntityProvider {
 	
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileEntityLightbox();
+		return new LightboxTileEntity();
 	}
 	
 	@Override

@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TileEntityLightbox extends TileEntity implements ITickable {
+public class LightboxTileEntity extends TileEntity implements ITickable {
 
 	private ItemStackHandler handler = new ItemStackHandler(7);
 	private String customName;
@@ -93,7 +93,7 @@ public class TileEntityLightbox extends TileEntity implements ITickable {
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public static boolean isBurning(TileEntityLightbox te) 
+	public static boolean isBurning(LightboxTileEntity te) 
 	{
 		return te.getField(0) > 0;
 	}
