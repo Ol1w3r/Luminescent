@@ -25,10 +25,11 @@ import w3r.lumi.util.Reference;
 
 public class Lightbox extends BlockBase implements ITileEntityProvider {
 
-	public static final PropertyBool BURNING = PropertyBool.create("burning");
+	//public static final PropertyBool BURNING = PropertyBool.create("burning");
+	
 	public Lightbox(String name) {
 		super(name, Material.ROCK);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(BURNING, false));
+		this.setDefaultState(this.blockState.getBaseState()); //this.blockState.getBaseState().withProperty(BURNING, false));
 	}
 	
 	@Override
@@ -61,8 +62,8 @@ public class Lightbox extends BlockBase implements ITileEntityProvider {
 	public static void setState(boolean active, World worldIn, BlockPos pos) {
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 		
-		if(active) worldIn.setBlockState(pos, Blocks.LIGHTBOX.getDefaultState().withProperty(BURNING, true), 3);
-		else worldIn.setBlockState(pos, Blocks.LIGHTBOX.getDefaultState().withProperty(BURNING, false), 3);
+		if(active) worldIn.setBlockState(pos, Blocks.LIGHTBOX.getDefaultState(), 3);
+		else worldIn.setBlockState(pos, Blocks.LIGHTBOX.getDefaultState(), 3);
 		
 		if(tileentity != null) {
 			tileentity.validate();
@@ -94,7 +95,7 @@ public class Lightbox extends BlockBase implements ITileEntityProvider {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { BURNING });
+		return new BlockStateContainer(this, new IProperty[] { });
 	}
 	
 	@Override
