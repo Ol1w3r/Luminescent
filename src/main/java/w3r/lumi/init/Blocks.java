@@ -15,7 +15,6 @@ public class Blocks {
 	
 	public static final Block LIGHTBOX = new Lightbox("lightbox");
 	
-	
 	public static final CreativeTabs tabLumi = (new CreativeTabs("tabLumi") {
 
 		@Override

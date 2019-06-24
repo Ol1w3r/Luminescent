@@ -1,6 +1,6 @@
 {
     "variants": {
-        "burning=false": { "model": "lumi:lightbox" },
+        "normal": { "model": "lumi:lightbox" },
         "burning=true": { "model": "lumi:lightbox_lit" }
         }
 }
