@@ -94,25 +94,29 @@ public class LightboxContainer extends Container {
 				if(!this.mergeItemStack(stack1, 4, 40, true)) return ItemStack.EMPTY;
 				slot.onSlotChange(stack1, stack);
 			}
-			else if(index != 2 && index != 1 && index != 0) 
+			else if(index != 4 && index != 3 && index != 2 && index != 1 && index != 0) 
 			{		
 				Slot slot1 = (Slot)this.inventorySlots.get(index + 1);
+				Slot slot2 = (Slot)this.inventorySlots.get(index + 2);
+				Slot slot3 = (Slot)this.inventorySlots.get(index + 3);
+				Slot slot4 = (Slot)this.inventorySlots.get(index + 4);
 				
-				if(!LightboxRecipes.getInstance().getLightboxResult(stack1, slot1.getStack()).isEmpty())
+				if(!LightboxRecipes.getInstance().getLightboxResult(stack1, slot1.getStack()
+						, slot2.getStack(), slot3.getStack(), slot4.getStack()).isEmpty())
 				{
 					if(!this.mergeItemStack(stack1, 0, 2, false)) 
 					{
 						return ItemStack.EMPTY;
 					}
-					else if(TileEntitySinteringFurnace.isItemFuel(stack1))
+					else if(LightboxTileEntity.isItemFuel(stack1))
 					{
 						if(!this.mergeItemStack(stack1, 2, 3, false)) return ItemStack.EMPTY;
 					}
-					else if(TileEntitySinteringFurnace.isItemFuel(stack1))
+					else if(LightboxTileEntity.isItemFuel(stack1))
 					{
 						if(!this.mergeItemStack(stack1, 2, 3, false)) return ItemStack.EMPTY;
 					}
-					else if(TileEntitySinteringFurnace.isItemFuel(stack1))
+					else if(LightboxTileEntity.isItemFuel(stack1))
 					{
 						if(!this.mergeItemStack(stack1, 2, 3, false)) return ItemStack.EMPTY;
 					}
